@@ -1,8 +1,11 @@
 # xmlrpc_bf
 
+![alt tag](https://github.com/c0dejump/xmlrpc_bf/blob/master/static/exemple.jpg)
+
 bruteforce login with xmlrpc.php in wordpress website
 
-# TODO
+# Features
+- [x] Check automaticly if method is allowed and admin webpage
 - [x] Search automatlicaly users in the website with different techniques
 
 # Usage:
@@ -26,7 +29,7 @@ bruteforce login with xmlrpc.php in wordpress website
 >
 
     //Basic
-    python xmlrpc_bf.py -u https://url.com/ -w passwd.txt
+    python xmlrpc_bf.py -u https://url.com/
     
     //Know user
     python xmlrpc_bf.py -u https://url.com/ -w passwd.txt --user admin

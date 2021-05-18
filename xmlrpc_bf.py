@@ -75,7 +75,6 @@ class search_user:
             sys.stdout.flush()
         if author:
             for aut in author:
-                print("\n")
                 print(" - {} User found: {}".format(PLUS, aut))
             return author
                 
