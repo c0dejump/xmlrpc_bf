@@ -1,0 +1,4 @@
+requests
+argparse
+fake_useragent
+json
