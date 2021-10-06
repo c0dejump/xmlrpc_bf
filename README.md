@@ -1,6 +1,6 @@
 # xmlrpc_bf
 
-![alt tag](https://github.com/c0dejump/xmlrpc_bf/blob/master/static/exemple.jpg)
+![alt tag](https://github.com/c0dejump/xmlrpc_bf/blob/master/static/exemple.png)
 
 bruteforce login with xmlrpc.php in wordpress website
 
